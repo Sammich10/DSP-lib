@@ -6,3 +6,6 @@ clean:
 
 run:
 	./main.exe
+
+all:
+	make clean main.exe run
