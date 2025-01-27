@@ -6,5 +6,3 @@ clean:
 
 run:
 	./main.exe
-
-all: clean main.exe
