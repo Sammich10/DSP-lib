@@ -1,0 +1,7 @@
+*.o
+*.so
+*.exe
+.vscode/
+.vscode/*
+build/
+Python/__pycache__
