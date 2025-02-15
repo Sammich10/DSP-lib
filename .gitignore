@@ -1,6 +1,7 @@
 *.o
 *.so
 *.exe
+*.json
 .vscode/
 .vscode/*
 build/
