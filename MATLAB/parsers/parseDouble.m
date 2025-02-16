@@ -5,5 +5,7 @@ function [d] = parseDouble(fname)
     
     nums = textscan(fid, '%f');
 
+    fclose(fid);
+
     d = nums{1};
 end

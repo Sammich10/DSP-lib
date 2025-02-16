@@ -7,9 +7,15 @@
 #ifndef DSP_H
 #define DSP_H
 
+#define USE_MATH_DEFINES
+
 #include <stdint.h>
 #include <vector>
 #include <math.h>
+#include <cmath>
+#include <complex>
+
+constexpr double PI = 3.14159265358979323846;
 
 /**
  * \brief Compute signal mean
@@ -143,6 +149,13 @@ std::vector<T> convolveSame
     return convolvedSig;
 }
 
+/**
+ * \brief Compute the running sum of a signal
+ * 
+ * @param sig Signal
+ * 
+ * @return Running sum of the signal
+ */
 template <typename T>
 std::vector<T> calcRunningSum
 (
@@ -159,5 +172,74 @@ std::vector<T> calcRunningSum
     return runningSum;
 }
 
+/**
+ * \brief Compute the discrete Fourier transform of a signal
+ * 
+ * @param signal The input signal
+ * 
+ * @return The DFT of the signal
+ */
+template <typename T>
+std::vector<T> calcSigDFT
+(
+    const std::vector<T>& signal
+)
+{
+    const size_t N = signal.size();
+    std::vector<T> dft(N/2);
+    // Iterate through each frequency bin
+    for(size_t f = 0; f < N/2; ++f)
+    {
+        // Iterate through each sample
+        for(size_t s = 0; s < N; ++s)
+        {
+            // Compute the real and imaginary parts of the DFT
+            dft[f] += signal[s] * std::cos(2 * PI * f * s / N);
+            dft[f] += signal[s] * std::sin(2 * PI * f * s / N);
+        }
+    }
+
+    return dft;
+}
+
+/**
+ * \brief Compute the discrete Fourier transform of a signal of real floating point values
+ * 
+ * @param signal The input signal
+ * @param N The length of the signal
+ * 
+ * @return Complex DFT of the signal
+ */
+std::vector<std::complex<double>> calcSigDFT_f
+(
+    const std::vector<double>& signal,
+    const size_t N
+);
+
+/**
+ * \brief Compute the inverse discrete Fourier transform of a signal of complex floating point values
+ * 
+ * @param dft The DFT of the signal
+ * @param N The length of the signal
+ * 
+ * @return The inverse DFT of the signal
+ */
+std::vector<double> calcSigIDFT_f
+(
+    const std::vector<std::complex<double>>& dft,
+    const size_t N
+);
+
+/**
+ * \brief Compute the magnitude of each complex DFT bin
+ * 
+ * @param dft The DFT of the signal
+ * 
+ * @return A vector of the magnitude of each DFT bin
+ */
+std::vector<double> calcDFTMag
+(
+    const std::vector<std::complex<double>>& dft
+);
 
 #endif

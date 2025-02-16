@@ -4,5 +4,7 @@ function [d] = parseIQ(fname
     
     nums = textscan(fid, '%f,%f');
 
+    fclose(fid);
+
     d = complex{1};
 end
