@@ -84,6 +84,37 @@ typedef struct complex_type
      * @returns The imaginary component of the complex number
      */
     double imag() const { return im; };
+
+    /**
+     * \brief Compute the squared magnitude of the complex number
+     * 
+     * @returns The squared magnitude of the complex number
+     */
+    inline double sqmag() const { return re * re + im * im; };
+    
+    /**
+     * \brief Compute the magnitude of the complex number
+     * 
+     * @returns The magnitude of the complex number
+     */
+    inline double abs() const { return std::sqrt(sqmag()); };
+
+    /**
+     * \brief Compute the angle of the complex number
+     * 
+     * @returns The angle of the complex number in radians
+     */
+    inline double angle() const { return std::atan2(im, re); };
+
+    /**
+     * \brief Compute the magnitude of a complex number in decibels
+     * 
+     * @param c The complex number
+     * 
+     * @return The magnitude of the complex number in decibels
+     */
+    inline double dB() const {return 10.0 * std::log10(sqmag());};
+
 } complex_t;
 
 /**
@@ -98,9 +129,35 @@ typedef struct complex_type
  * @return The sum of the two complex numbers as a complex_t type
  */
 
-complex_t operator+(const complex_t& a, const complex_t& b)
+complex_t operator+
+(
+    const complex_t& a,
+    const complex_t& b
+)
 {
     return {a.re + b.re, a.im + b.im};
+}
+
+/**
+ * \brief Add two complex numbers and store the result in the first complex number
+ * 
+ * This operator overloads the addition-assignment operator for complex_t types,
+ * adding complex number `b` to complex number `a` in-place.
+ * 
+ * @param a The first complex number, modified in-place
+ * @param b The second complex number
+ * 
+ * @return A reference to the modified complex number `a`
+ */
+complex_t& operator+=
+(
+    complex_t& a,
+    const complex_t& b
+)
+{
+    a.re += b.re;
+    a.im += b.im;
+    return a;
 }
 
 /**
@@ -114,9 +171,35 @@ complex_t operator+(const complex_t& a, const complex_t& b)
  * 
  * @return The difference of the two complex numbers as a complex_t type
  */
-complex_t operator-(const complex_t& a, const complex_t& b)
+complex_t operator-
+(
+    const complex_t& a,
+    const complex_t& b
+)
 {
     return {a.re - b.re, a.im - b.im};
+}
+
+/**
+ * \brief Subtract two complex numbers in-place
+ * 
+ * This operator overloads the subtraction-assignment operator for complex_t types,
+ * subtracting complex number `b` from complex number `a` in-place.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return A reference to the modified complex number `a`
+ */
+complex_t& operator-= 
+(
+    complex_t& a,
+    const complex_t& b
+)
+{
+    a.re -= b.re;
+    a.im -= b.im;
+    return a;
 }
 
 /**
@@ -131,9 +214,35 @@ complex_t operator-(const complex_t& a, const complex_t& b)
  * @return The product of the two complex numbers as a complex_t type
  */
 
-complex_t operator*(const complex_t& a, const complex_t& b)
+complex_t operator*
+(
+    const complex_t& a,
+    const complex_t& b
+)
 {
     return {a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re};
+}
+
+/**
+ * \brief Multiply two complex numbers in-place
+ * 
+ * This operator overloads the multiplication-assignment operator for complex_t types,
+ * multiplying complex number `a` by complex number `b` in-place.
+ * 
+ * @param a The first complex number, modified in-place
+ * @param b The second complex number
+ * 
+ * @return A reference to the modified complex number `a`
+ */
+complex_t& operator*=
+(
+    complex_t& a,
+    const complex_t& b
+)
+{
+    a.re *= b.re - a.im * b.im;
+    a.im *= a.re * b.im + a.im * b.re;
+    return a;
 }
 
 /**
@@ -150,72 +259,110 @@ complex_t operator*(const complex_t& a, const complex_t& b)
  * \note The division is performed by multiplying `a` by the conjugate of `b` 
  *       and dividing by the magnitude of `b` squared.
  */
-complex_t operator/(const complex_t& a, const complex_t& b)
+complex_t operator/
+(
+    const complex_t& a,
+    const complex_t& b
+)
 {
     double denom = b.re * b.re + b.im * b.im;
     return {(a.re * b.re + a.im * b.im) / denom, (a.im * b.re - a.re * b.im) / denom};
 }
 
-/**
- * \brief Compute the magnitude of a complex number
- * 
- * @param c The complex number
- * 
- * @return The magnitude of the complex number
- */
-inline double mag
+complex_t& operator/=
 (
-    const complex_t& c
-) 
-{
-    return std::sqrt(c.re * c.re + c.im * c.im);
-}
-
-/**
- * \brief Compute the magnitude of a complex number squared
- * 
- * @param c The complex number
- * 
- * @return The magnitude of the complex number squared
- */
-inline double magSq
-(
-    const complex_t& c
-) 
-{
-    return c.re * c.re + c.im * c.im;
-}
-
-
-/**
- * \brief Compute the phase of a complex number
- * 
- * @param c The complex number
- * 
- * @return The phase of the complex number in radians
- */
-inline double phase
-(
-    const complex_t& c
-) 
-{
-    return std::atan2(c.im, c.re);
-}
-
-/**
- * \brief Compute the magnitude of a complex number in decibels
- * 
- * @param c The complex number
- * 
- * @return The magnitude of the complex number in decibels
- */
-
-inline double dB
-(
-    const complex_t& c
+    complex_t& a,
+    const complex_t& b
 )
 {
-    return 10 * std::log10(magSq(c));
+    double denom = b.re * b.re + b.im * b.im;
+    a.re = (a.re * b.re + a.im * b.im) / denom;
+    a.im = (a.im * b.re - a.re * b.im) / denom;
+    return a;
+}
+
+/**
+ * \brief Compare two complex numbers for equality
+ * 
+ * This operator overloads the equality operator for complex_t types,
+ * returning true if the real and imaginary components of both complex numbers are equal.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return True if the complex numbers are equal, false otherwise
+ */
+const bool operator==
+(
+    const complex_t& a,
+    const complex_t& b
+) 
+{
+    return a.re == b.re && a.im == b.im;
+}
+
+/**
+ * \brief Compare two complex numbers for inequality
+ * 
+ * This operator overloads the inequality operator for complex_t types,
+ * returning true if either the real or imaginary components of the complex numbers differ.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return True if the complex numbers are not equal, false otherwise
+ */
+const bool operator!=
+(
+    const complex_t& a,
+    const complex_t& b
+) 
+{
+    return a.re != b.re || a.im != b.im;
+}
+
+/**
+ * \brief Compare two complex numbers based on their magnitude
+ * 
+ * This operator overloads the less-than operator for complex_t types,
+ * returning true if the magnitude of the first complex number is less than
+ * the magnitude of the second complex number.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return True if the magnitude of the first complex number is less than
+ * the magnitude of the second complex number, false otherwise
+ */
+const bool operator<
+(
+    const complex_t& a,
+    const complex_t& b
+)
+{
+    return a.abs() < b.abs();
+}
+
+/**
+ * \brief Compare two complex numbers by magnitude
+ * 
+ * This operator overloads the greater than operator for complex_t types,
+ * returning true if the magnitude of the first complex number is greater than
+ * the magnitude of the second complex number.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return True if the magnitude of the first complex number is greater than
+ *         the magnitude of the second complex number, false otherwise
+ */
+const bool operator>
+(
+    const complex_t& a,
+    const complex_t& b
+)
+{
+    return a.abs() > b.abs();
 }
 
 } // namespace complexDSP
