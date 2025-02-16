@@ -344,6 +344,28 @@ const bool operator<
 }
 
 /**
+ * \brief Compare two complex numbers based on their magnitude
+ * 
+ * This operator overloads the less-than-or-equal-to operator for complex_t types,
+ * returning true if the magnitude of the first complex number is less than
+ * or equal to the magnitude of the second complex number.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return True if the magnitude of the first complex number is less than
+ * or equal to the magnitude of the second complex number, false otherwise
+ */
+const bool operator<=
+(
+    const complex_t& a,
+    const complex_t& b
+)
+{
+    return a.abs() <= b.abs();
+}
+
+/**
  * \brief Compare two complex numbers by magnitude
  * 
  * This operator overloads the greater than operator for complex_t types,
@@ -363,6 +385,28 @@ const bool operator>
 )
 {
     return a.abs() > b.abs();
+}
+
+/**
+ * \brief Compare two complex numbers by magnitude
+ * 
+ * This operator overloads the greater than or equal to operator for complex_t types,
+ * returning true if the magnitude of the first complex number is greater than
+ * or equal to the magnitude of the second complex number.
+ * 
+ * @param a The first complex number
+ * @param b The second complex number
+ * 
+ * @return True if the magnitude of the first complex number is greater than
+ *         or equal to the magnitude of the second complex number, false otherwise
+ */
+const bool operator>=
+(
+    const complex_t& a,
+    const complex_t& b
+)
+{
+    return a.abs() >= b.abs();
 }
 
 } // namespace complexDSP
