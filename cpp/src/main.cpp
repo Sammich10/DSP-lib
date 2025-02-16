@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <complex>
 
 int main() {
     std::string dataPath = "../Data/";
@@ -18,7 +17,7 @@ int main() {
 
     exportToFile_f(convolvedSignal, "convolved_signal.dat", dataPath);
 
-    std::vector<std::complex<double>> dft = calcSigDFT_f(waveform, waveform.size());
+    std::vector<complexDSP::complex_t> dft = calcSigDFT_f(waveform, waveform.size());
 
     std::vector<double> dft_real(dft.size(), 0.0);
     std::vector<double> dft_imag(dft.size(), 0.0);
@@ -35,7 +34,7 @@ int main() {
 
     exportToFile_f(synth_waveform, "synth_waveform.dat", dataPath);
 
-    std::vector<double> dft_mag = calcDFTMag_f(dft);
+    std::vector<double> dft_mag = calcDFTMag(dft);
 
     exportToFile_f(dft_mag, "dft_mag.dat", dataPath);
 

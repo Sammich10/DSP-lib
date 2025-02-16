@@ -1,12 +1,12 @@
 #include "libdsp.h"
 
-std::vector<std::complex<double>> calcSigDFT_f(
+std::vector<complex_t> calcSigDFT_f(
     const std::vector<double>& signal,
     const size_t N
 )
 {
     // Initialize the DFT
-    std::vector<std::complex<double>> dft(N, 0.0);
+    std::vector<complex_t> dft(N, {0.0, 0.0});
 
     // Iterate through each frequency bin
     for(size_t f = 0; f < N; ++f)
@@ -15,9 +15,9 @@ std::vector<std::complex<double>> calcSigDFT_f(
         for(size_t s = 0; s < signal.size(); ++s)
         {
             // Compute the real and imaginary parts of the DFT
-            double theta = 2.0 * PI * (double)f * (double)s / (double)N;
-            dft[f].real(dft[f].real() + signal[s] * std::cos(theta));
-            dft[f].imag(dft[f].imag() - signal[s] * std::sin(theta));
+            double theta = 2.0 * M_PI * (double)f * (double)s / (double)N;
+            dft[f].real(dft[f].re + signal[s] * std::cos(theta));
+            dft[f].imag(dft[f].im - signal[s] * std::sin(theta));
         }
     }
 
@@ -25,7 +25,7 @@ std::vector<std::complex<double>> calcSigDFT_f(
 }
 
 std::vector<double> calcSigIDFT_f(
-    const std::vector<std::complex<double>>& dft,
+    const std::vector<complex_t>& dft,
     const size_t N
 )
 {
@@ -36,8 +36,8 @@ std::vector<double> calcSigIDFT_f(
         idft[f] = 0.0;
         for(size_t s = 0; s < N; ++s)
         {
-            double theta = 2.0 * PI * (double)f * (double)s / (double)N;
-            idft[f] = idft[f] + dft[s].real() * std::cos(theta) - dft[s].imag() * std::sin(theta);
+            double theta = 2.0 * M_PI * (double)f * (double)s / (double)N;
+            idft[f] = idft[f] + dft[s].re * std::cos(theta) - dft[s].im * std::sin(theta);
         }
         idft[f] = idft[f] / (double)N;
     }
@@ -47,13 +47,13 @@ std::vector<double> calcSigIDFT_f(
 
 std::vector<double> calcDFTMag
 (
-    const std::vector<std::complex<double>>& dft
+    const std::vector<complex_t>& dft
 )
 {
     std::vector<double> mag(dft.size(), 0.0);
     for(size_t f = 0; f < dft.size(); ++f)
     {
-        mag[f] = std::sqrt(dft[f].real() * dft[f].real() + dft[f].imag() * dft[f].imag());
+        mag[f] = std::sqrt(dft[f].re * dft[f].re + dft[f].im * dft[f].im);
     }
     return mag;
 }

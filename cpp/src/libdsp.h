@@ -9,13 +9,13 @@
 
 #define USE_MATH_DEFINES
 
+#include "complextype.h"
 #include <stdint.h>
 #include <vector>
 #include <math.h>
 #include <cmath>
-#include <complex>
 
-constexpr double PI = 3.14159265358979323846;
+using namespace complexDSP;
 
 /**
  * \brief Compute signal mean
@@ -194,8 +194,8 @@ std::vector<T> calcSigDFT
         for(size_t s = 0; s < N; ++s)
         {
             // Compute the real and imaginary parts of the DFT
-            dft[f] += signal[s] * std::cos(2 * PI * f * s / N);
-            dft[f] += signal[s] * std::sin(2 * PI * f * s / N);
+            dft[f] += signal[s] * std::cos(2 * M_PI * f * s / N);
+            dft[f] += signal[s] * std::sin(2 * M_PI * f * s / N);
         }
     }
 
@@ -210,7 +210,7 @@ std::vector<T> calcSigDFT
  * 
  * @return Complex DFT of the signal
  */
-std::vector<std::complex<double>> calcSigDFT_f
+std::vector<complex_t> calcSigDFT_f
 (
     const std::vector<double>& signal,
     const size_t N
@@ -226,7 +226,7 @@ std::vector<std::complex<double>> calcSigDFT_f
  */
 std::vector<double> calcSigIDFT_f
 (
-    const std::vector<std::complex<double>>& dft,
+    const std::vector<complex_t>& dft,
     const size_t N
 );
 
@@ -239,7 +239,24 @@ std::vector<double> calcSigIDFT_f
  */
 std::vector<double> calcDFTMag
 (
-    const std::vector<std::complex<double>>& dft
+    const std::vector<complex_t>& dft
 );
+
+template <typename T>
+double getMax
+(
+    const std::vector<T>& sig
+)
+{
+    double max = sig[0];
+    for(size_t i = 1; i < sig.size(); i++)
+    {
+        if(sig[i] > max)
+        {
+            max = sig[i];
+        }
+    }
+    return max;
+}
 
 #endif
