@@ -45,6 +45,27 @@ std::vector<double> calcSigIDFT_f(
     return idft;
 }
 
+std::vector<complex_t> calcSigDFT
+(
+    const std::vector<complex_t>& signal
+)
+{
+    std::vector<complex_t> dft(signal.size(), {0.0, 0.0});
+    for(size_t f = 0; f < signal.size(); ++f)
+    {
+        complex_t sum = {0.0, 0.0};
+        for(size_t s = 0; s < signal.size(); ++s)
+        {
+            double theta = 2.0 * M_PI * (double)f * (double)s / (double)signal.size();
+            double cos_theta = std::cos(theta);
+            double sin_theta = std::sin(theta);
+            sum += signal[s] * complex_t(cos_theta, sin_theta);
+        }
+        dft[f] = sum;
+    }
+    return dft;
+}
+
 std::vector<double> calcDFTMag
 (
     const std::vector<complex_t>& dft

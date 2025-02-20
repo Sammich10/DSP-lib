@@ -122,7 +122,7 @@ std::vector<T> convolveFull
 }
 
 /**
- * \brief Do a same convolution of signal with kernel
+ * \brief Do a central convolution of signal with kernel
  * 
  * @param sig Signal
  * @param kernel Kernel
@@ -130,22 +130,25 @@ std::vector<T> convolveFull
  * @return Convolved signal
  */
 template <typename T>
-std::vector<T> convolveSame
+std::vector<T> convolveCentral
 (
     const std::vector<T> &sig,
     const std::vector<T> &kernel
 )
 {
     std::vector<T> convolvedSig(sig.size());
+    size_t offset = kernel.size() / 2;
 
     for(size_t i = 0; i < sig.size(); i++)
     {
         for(size_t j = 0; j < kernel.size(); j++)
         {
-            convolvedSig[i] += sig[i-j] * kernel[j];
+            size_t idx = i + j - offset;
+            if(idx < 0 || idx >= sig.size()) continue;
+            convolvedSig[i] += sig[idx] * kernel[j];
         }
     }
-
+    
     return convolvedSig;
 }
 
@@ -231,7 +234,7 @@ std::vector<double> calcSigIDFT_f
 );
 
 /**
- * \brief Compute the magnitude of each complex DFT bin
+ * \brief Find the magnitude of each complex DFT bin
  * 
  * @param dft The DFT of the signal
  * 
@@ -240,6 +243,11 @@ std::vector<double> calcSigIDFT_f
 std::vector<double> calcDFTMag
 (
     const std::vector<complex_t>& dft
+);
+
+std::vector<complex_t> calcSigDFT
+(
+    const std::vector<complex_t>& signal
 );
 
 template <typename T>
@@ -257,6 +265,82 @@ double getMax
         }
     }
     return max;
+}
+
+/**
+ * \brief Find the index of the maximum value in a signal
+ * 
+ * @param sig The input signal
+ * 
+ * @return The index of the maximum value in the signal
+ */
+template <typename T>
+size_t getMaxIdx
+(
+    const std::vector<T>& sig
+)
+{
+    double max = sig[0];
+    size_t maxIdx = 0;
+    for(size_t i = 1; i < sig.size(); i++)
+    {
+        if(sig[i] > max)
+        {
+            max = sig[i];
+            maxIdx = i;
+        }
+    }
+    return maxIdx;
+}
+
+/**
+ * \brief Find the minimum value in a signal
+ * 
+ * @param sig The input signal
+ * 
+ * @return The minimum value in the signal
+ */
+template <typename T>
+double getMin
+(
+    const std::vector<T>& sig
+)
+{
+    double min = sig[0];
+    for(size_t i = 1; i < sig.size(); i++)
+    {
+        if(sig[i] < min)
+        {
+            min = sig[i];
+        }
+    }
+    return min;
+}
+
+/**
+ * \brief Find the index of the minimum value in a signal
+ * 
+ * @param sig The input signal
+ * 
+ * @return The index of the minimum value in the signal
+ */
+template <typename T>
+size_t getMinIdx
+(
+    const std::vector<T>& sig
+)
+{
+    double min = sig[0];
+    size_t minIdx = 0;
+    for(size_t i = 1; i < sig.size(); i++)
+    {
+        if(sig[i] < min)
+        {
+            min = sig[i];
+            minIdx = i;
+        }
+    }
+    return minIdx;
 }
 
 #endif

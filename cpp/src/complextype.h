@@ -115,6 +115,13 @@ typedef struct complex_type
      */
     inline double dB() const {return 10.0 * std::log10(sqmag());};
 
+    /**
+     * \brief Compute the polar coordinates of a complex number
+     * 
+     * @returns A pair containing the magnitude and angle of the complex number
+     */
+    inline std::pair<double, double> polar() const { return {abs(), angle()}; };
+
 } complex_t;
 
 /**
